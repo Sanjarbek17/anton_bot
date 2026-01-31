@@ -36,8 +36,7 @@ session = session_service.create_session_sync(
     user_id=user_id,
 )
 
-while True:
-    user_message = input("enter message: ")
+def process_answer(user_message):
     msg_content = types.Content(
         role="user",
         parts=[types.Part(text=user_message)]
@@ -48,6 +47,9 @@ while True:
         session_id=session.id,
         new_message=msg_content,
     )
-
+    full_response = ''
     for event in response:
-        print(event.content.parts[0].text)
+        print(event.content)
+        if event.is_final_response:
+            full_response += event.content.parts[0].text or ''
+    return full_response

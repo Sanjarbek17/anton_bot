@@ -2,14 +2,15 @@
 from telethon import TelegramClient, events
 import asyncio
 
+
+from src.adk_agent.agent import process_answer
+from config.settings import settings
+
 class TelethonBot:
     def __init__(self, api_id, api_hash, session_name='telethon_session'):
         self.client = TelegramClient(session_name, api_id, api_hash)
         self.agent = None # To be set by main.py
         print("Telethon Bot initialized.")
-
-    def set_agent(self, agent):
-        self.agent = agent
 
     async def start(self):
         print("Starting Telethon Bot...")
@@ -26,11 +27,11 @@ class TelethonBot:
             sender = await event.get_sender()
             print(f"[{sender.username or sender.id}] {event.text}")
 
-            if self.agent:
-                adk_response = self.agent.process_message(event.text)
+            adk_response = process_answer(event.text)
+            if adk_response:
                 await event.reply(adk_response)
             else:
-                await event.reply("Bot is not connected to an ADK agent yet.")
+                await event.reply("Idk")
 
     async def stop(self):
         await self.client.disconnect()
@@ -41,13 +42,14 @@ if __name__ == '__main__':
     # You would typically get these from environment variables or a config file
     # from dotenv import load_dotenv
     # load_dotenv()
-    # API_ID = os.getenv('TELEGRAM_API_ID')
-    # API_HASH = os.getenv('TELEGRAM_API_HASH')
+    API_ID = settings.TELEGRAM_API_ID
+    API_HASH = settings.TELEGRAM_API_HASH
 
-    # if not API_ID or not API_HASH:
-    #     print("Please set TELEGRAM_API_ID and TELEGRAM_API_HASH environment variables.")
-    # else:
-    #     bot = TelethonBot(int(API_ID), API_HASH)
-    #     bot.register_message_handler()
-    #     asyncio.run(bot.start())
+
+    if not API_ID or not API_HASH:
+        print("Please set TELEGRAM_API_ID and TELEGRAM_API_HASH environment variables.")
+    else:
+        bot = TelethonBot(int(API_ID), API_HASH)
+        bot.register_message_handler()
+        asyncio.run(bot.start())
     print("Telethon Bot placeholder. Run via main.py")
