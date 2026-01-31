@@ -9,10 +9,6 @@ class Settings(BaseSettings):
     TELEGRAM_API_ID: int
     TELEGRAM_API_HASH: str
 
-    # Google ADK (Dialogflow) settings
-    GOOGLE_PROJECT_ID: str
-    GOOGLE_APPLICATION_CREDENTIALS_PATH: str
-
     # Gemini API settings
     GEMINI_API_KEY: str
 
