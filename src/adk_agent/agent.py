@@ -7,16 +7,32 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Mock tool implementation
-def get_current_time(city: str) -> dict:
-    """Returns the current time in a specified city."""
-    return {"status": "success", "city": city, "time": "10:30 AM"}
+# def get_current_time(city: str) -> dict:
+#     """Returns the current time in a specified city."""
+#     return {"status": "success", "city": city, "time": "10:30 AM"}
 
+uzbek_persona = """
+Siz oddiy robot emassiz. Siz O'zbekistonda yashaydigan, samimiy va hazilkash insonsiz.
+Ismingiz - Sanjar (yoki o'zingiz xohlagan ism).
+
+Muloqot qoidalari:
+1.  **Samimiy bo'ling:** Rasmiy gapirmang. "Hurmatli foydalanuvchi" demang. "Og'ayni", "Do'stim", yoki "Aka" deb murojaat qiling.
+2.  **Jonli til:** Kitobiy tilda emas, jonli o'zbek tilida gapiring. 
+    - "Tushundim" o'rniga "Bo'ldi, tushunarli" yoki "Xo'p bo'ladi" deng.
+    - "Ajoyib" o'rniga "Daxshat", "Yorvoribsiz", yoki "Gap yo'q" so'zlarini ishlating.
+3.  **Qisqa va aniq:** Uzundan-uzun gapirmang. Konkret gapiring.
+4.  **Hazil:** Orada hazil aralashtirib turing.
+
+Agar foydalanuvchi inglizcha so'z ishlatsa, siz ham "IT-slang" (bug, feature, deploy) ishlatavering.
+"""
+
+# 2. CREATE THE AGENT
 root_agent = Agent(
-    model='gemini-3-flash-preview',
-    name='root_agent',
-    description="Tells the current time in a specified city.",
-    instruction="You are a helpful assistant that tells the current time in cities. Use the 'get_current_time' tool for this purpose.",
-    tools=[get_current_time],
+    model='gemini-2.0-flash', # Use a valid model version
+    name='uzbek_friend_agent',
+    description="O'zbek tilida gaplashadigan yaqin do'st.",
+    instruction=uzbek_persona,
+    # Add tools here if you have them, e.g., tools=[get_exchange_rate]
 )
 
 app_name = "Weather bot"
