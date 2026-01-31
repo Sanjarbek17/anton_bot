@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     GOOGLE_PROJECT_ID: str
     GOOGLE_APPLICATION_CREDENTIALS_PATH: str
 
+    # Gemini API settings
+    GEMINI_API_KEY: str
+
     # Pydantic settings configuration
     model_config = SettingsConfigDict(
         env_file=".env",

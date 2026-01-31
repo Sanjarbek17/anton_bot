@@ -2,3 +2,4 @@ telethon
 google-cloud-dialogflow
 pydantic
 pydantic-settings
+google-generativeai
