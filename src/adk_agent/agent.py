@@ -1,38 +1,53 @@
-# src/adk_agent/agent.py
-import google.generativeai as genai
-from config.settings import settings
+from google.adk.agents.llm_agent import Agent
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.genai import types
+from dotenv import load_dotenv
 
-class GoogleADKAgent:
-    def __init__(self):
-        print("Google ADK Agent initialized.")
-        if not settings.GEMINI_API_KEY:
-            raise ValueError("GEMINI_API_KEY is not set in environment variables or config/settings.py")
+load_dotenv()
 
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-pro')
-        print("Gemini model configured.")
+# Mock tool implementation
+def get_current_time(city: str) -> dict:
+    """Returns the current time in a specified city."""
+    return {"status": "success", "city": city, "time": "10:30 AM"}
 
-    def process_message(self, message):
-        """
-        Processes a message using the Google Gemini API.
-        """
-        try:
-            print(f"Sending to Gemini: {message}")
-            response = self.model.generate_content(message)
-            response_text = response.text
-            print(f"Received from Gemini: {response_text}")
-            return response_text
-        except Exception as e:
-            print(f"Error processing message with Gemini: {e}")
-            return "Sorry, I'm having trouble connecting to the AI at the moment."
+root_agent = Agent(
+    model='gemini-3-flash-preview',
+    name='root_agent',
+    description="Tells the current time in a specified city.",
+    instruction="You are a helpful assistant that tells the current time in cities. Use the 'get_current_time' tool for this purpose.",
+    tools=[get_current_time],
+)
 
-if __name__ == '__main__':
-    # This block will now require a valid GEMINI_API_KEY in .env or config/settings.py
-    # for testing purposes.
-    try:
-        agent = GoogleADKAgent()
-        agent.process_message("Hello from test agent!")
-    except ValueError as e:
-        print(f"Test agent initialization failed: {e}")
-    except Exception as e:
-        print(f"An unexpected error occurred during test agent execution: {e}")
+app_name = "Weather bot"
+user_id = 'sanjarbek'
+session_id = 'v1'
+
+session_service = InMemorySessionService()
+
+runner = Runner(
+    app_name=app_name,
+    agent=root_agent,
+    session_service=session_service,
+)
+
+session = session_service.create_session_sync(
+    app_name=app_name,
+    user_id=user_id,
+)
+
+while True:
+    user_message = input("enter message: ")
+    msg_content = types.Content(
+        role="user",
+        parts=[types.Part(text=user_message)]
+    )
+
+    response = runner.run(
+        user_id=user_id,
+        session_id=session.id,
+        new_message=msg_content,
+    )
+
+    for event in response:
+        print(event.content.parts[0].text)
