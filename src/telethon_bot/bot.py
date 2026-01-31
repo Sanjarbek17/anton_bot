@@ -7,7 +7,7 @@ from src.adk_agent.agent import process_answer
 from config.settings import settings
 
 class TelethonBot:
-    def __init__(self, api_id, api_hash, session_name='telethon_session'):
+    def __init__(self, api_id, api_hash, session_name='data/telethon_session'):
         self.client = TelegramClient(session_name, api_id, api_hash)
         self.agent = None # To be set by main.py
         print("Telethon Bot initialized.")
