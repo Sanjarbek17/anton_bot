@@ -29,9 +29,9 @@ class TelethonBot:
 
             adk_response = process_answer(event.text)
             if adk_response:
-                await event.reply(adk_response)
+                await self.client.send_message(event.chat_id, adk_response)
             else:
-                await event.reply("Idk")
+                await self.client.send_message(event.chat_id, "Idk")
 
     async def stop(self):
         await self.client.disconnect()
