@@ -1,11 +1,24 @@
 # config/settings.py
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Telethon API credentials
-# Get these from https://my.telegram.org/apps
-TELEGRAM_API_ID = 12345678 # Replace with your API ID
-TELEGRAM_API_HASH = "your_api_hash_here" # Replace with your API Hash
+class Settings(BaseSettings):
+    """
+    Application settings, loaded from .env file and environment variables.
+    """
+    # Telethon API credentials
+    TELEGRAM_API_ID: int
+    TELEGRAM_API_HASH: str
 
-# Google ADK (Dialogflow) settings
-# Project ID, credentials path, etc.
-GOOGLE_PROJECT_ID = "your-google-project-id"
-GOOGLE_APPLICATION_CREDENTIALS_PATH = "path/to/your/credentials.json"
+    # Google ADK (Dialogflow) settings
+    GOOGLE_PROJECT_ID: str
+    GOOGLE_APPLICATION_CREDENTIALS_PATH: str
+
+    # Pydantic settings configuration
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding='utf-8',
+        extra='ignore'  # Ignore extra fields from .env
+    )
+
+# Create a single instance of the settings to be used throughout the application
+settings = Settings()
